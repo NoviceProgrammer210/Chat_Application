@@ -1,10 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Chat App{% endblock %}</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Optional: enable dark mode based on user system preference
+        tailwind.config = {
+            darkMode: 'class'
+        };
+    </script>
     <style>
         .chat-messages {
             height: 200px;
@@ -12,28 +18,28 @@
         }
     </style>
 </head>
-<body class="bg-teal-800 font-sans text-gray-200">
+<body class="bg-gray-100 dark:bg-gray-900 font-sans text-gray-800 dark:text-gray-200 transition-colors duration-300">
     <!-- Navigation Bar -->
-    <nav class="flex items-center justify-between px-6 py-4 bg-teal-900 shadow-md">
+    <nav class="flex items-center justify-between px-6 py-4 bg-gray-200 dark:bg-gray-800 shadow-md">
         <div>
-            <a href="/" class="text-2xl text-white font-semibold hover:text-teal-200 transition duration-300">Chat</a>
+            <a href="/" class="text-2xl font-semibold text-gray-900 dark:text-white hover:text-teal-600 dark:hover:text-teal-400 transition duration-300">Chat</a>
         </div>
         <div class="flex items-center space-x-6">
             {% if request.user.is_authenticated %}
-                <a href="/rooms/" class="text-white hover:text-teal-200 transition duration-300">Rooms</a>
+                <a href="/rooms/" class="text-gray-900 dark:text-gray-200 hover:text-teal-600 dark:hover:text-teal-400 transition duration-300">Rooms</a>
                 <form method="POST" action="{% url 'logout' %}">
                     {% csrf_token %}
-                    <button class="px-6 py-2 rounded-lg text-white bg-teal-600 hover:bg-teal-700 transition duration-300">Log out</button>
+                    <button class="px-6 py-2 rounded-lg bg-teal-600 text-white hover:bg-teal-700 transition duration-300">Log out</button>
                 </form>
             {% else %}
-                <a href="/login/" class="text-white hover:text-teal-200 transition duration-300">Login</a>
-                <a href="/signup/" class="px-6 py-2 rounded-lg text-white bg-teal-600 hover:bg-teal-700 transition duration-300">Signup</a>
+                <a href="/login/" class="text-gray-900 dark:text-gray-200 hover:text-teal-600 dark:hover:text-teal-400 transition duration-300">Login</a>
+                <a href="/signup/" class="px-6 py-2 rounded-lg bg-teal-600 text-white hover:bg-teal-700 transition duration-300">Signup</a>
             {% endif %}
         </div>
     </nav>
 
     <!-- Main Content Area -->
-    <main class="min-h-screen bg-teal-800 px-4 py-8">
+    <main class="min-h-screen px-4 py-8">
         <div class="w-full">
             {% block content %}
             <!-- Content goes here -->
