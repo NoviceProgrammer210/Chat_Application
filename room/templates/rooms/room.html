@@ -1,0 +1,116 @@
+{% extends 'core/base.html' %}
+
+{% block title %}{{ room.name }} | {% endblock %}
+
+{% block content %}
+<div class="p-6 lg:p-12 text-center">
+    <h1 class="text-2xl lg:text-4xl text-white font-semibold">{{ room.name }}</h1>
+</div>
+
+<!-- Chat messages container - full width -->
+<div class="w-full p-6 bg-gray-800 rounded-xl shadow-md overflow-y-auto max-h-[700px] text-white">
+    <div class="chat-messages space-y-3" id="chat-messages">
+        {% for m in messages %}
+            {% if m.user.username == request.user.username %}
+                <div class="flex justify-end">
+                    <div class="bg-teal-600 text-white p-3 rounded-lg mb-2 max-w-md break-words">
+                        <p class="text-sm"><b>You</b></p>
+                        <p>{{ m.content }}</p>
+                    </div>
+                </div>
+            {% else %}
+                <div class="flex justify-start">
+                    <div class="bg-gray-700 text-white p-3 rounded-lg mb-2 max-w-md break-words">
+                        <p class="text-sm"><b>{{ m.user.username }}</b></p>
+                        <p>{{ m.content }}</p>
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Message input form - full width -->
+<div class="w-full mt-6 p-6 bg-gray-800 rounded-xl shadow-md">
+    <form method="post" action="." class="flex items-center">
+        {% csrf_token %}
+        <input type="text" name="content" class="flex-1 mr-3 px-4 py-2 rounded-lg border-2 border-teal-300 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-gray-800" placeholder="Your message..." id="chat-message-input">
+        <button 
+            class="px-6 py-3 rounded-xl text-white bg-teal-600 hover:bg-teal-700 transition duration-300"
+            id="chat-message-submit"
+        >Submit</button>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ room.slug|json_script:"json-roomname" }}
+{{ request.user.username|json_script:"json-username" }}
+
+<script>
+    const roomName = JSON.parse(document.getElementById('json-roomname').textContent);
+    const userName = JSON.parse(document.getElementById('json-username').textContent);
+    const chatSocket = new WebSocket(
+        'ws://' + window.location.host + '/ws/' + roomName + '/'
+    );
+
+    chatSocket.onclose = function(e) {
+        console.log('Socket closed.');
+    };
+
+    chatSocket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+
+        if (data.message) {
+            const alignment = data.userName === userName ? 'justify-end' : 'justify-start';
+            const bgColor = data.userName === userName ? 'bg-teal-600' : 'bg-gray-700';
+            const sender = data.userName === userName ? 'You' : data.userName;
+
+            const messageHTML = `
+                <div class="flex ${alignment}">
+                    <div class="${bgColor} text-white p-3 rounded-lg mb-2 max-w-md break-words">
+                        <p class="text-sm"><b>${sender}</b></p>
+                        <p>${data.message}</p>
+                    </div>
+                </div>
+            `;
+
+            document.querySelector('#chat-messages').innerHTML += messageHTML;
+            scrollToBottom();
+        } else {
+            alert('The message was empty!');
+        }
+    };
+
+    document.querySelector('#chat-message-input').focus();
+    document.querySelector('#chat-message-input').onkeyup = function(e) {
+        if (e.keyCode === 13) {
+            document.querySelector('#chat-message-submit').click();
+        }
+    };
+
+    document.querySelector('#chat-message-submit').onclick = function(e) {
+        e.preventDefault();
+
+        const messageInputDom = document.querySelector('#chat-message-input');
+        const message = messageInputDom.value;
+
+        if (!message.trim()) return;
+
+        chatSocket.send(JSON.stringify({
+            'message': message,
+            'username': userName,
+            'room': roomName
+        }));
+
+        messageInputDom.value = '';
+    };
+
+    function scrollToBottom() {
+        const chatBox = document.getElementById('chat-messages');
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    scrollToBottom();
+</script>
+{% endblock %}

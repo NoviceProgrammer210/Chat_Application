@@ -1,0 +1,44 @@
+{% extends 'core/base.html' %}
+
+{% block title %}
+    Login |
+{% endblock %}
+
+{% block content %}
+<div class="p-10 lg:p-20 text-center bg-teal-600 rounded-lg shadow-lg mt-8">
+    <h1 class="text-3xl lg:text-6xl text-white font-semibold">Login</h1>
+    <p class="mt-4 text-lg text-teal-100 max-w-2xl mx-auto">Please enter your credentials to access your account.</p>
+</div>
+
+<form action="." method="post" class="lg:w-1/3 w-full px-6 py-8 mx-auto mt-8 bg-white rounded-lg shadow-lg">
+    {% csrf_token %}
+
+    <div class="mb-6">
+        <label for="username" class="block text-teal-600 font-medium mb-2">Username</label>
+        <input type="text" name="username" id="username" class="w-full px-4 py-3 rounded-lg border-2 border-teal-300 text-gray-800 bg-teal-50 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+    </div>
+
+    <div class="mb-6">
+        <label for="password" class="block text-teal-600 font-medium mb-2">Password</label>
+        <input type="password" name="password" id="password" class="w-full px-4 py-3 rounded-lg border-2 border-teal-300 text-gray-800 bg-teal-50 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+    </div>
+
+    {% if form.errors %}
+        <div class="mb-6">
+            {% for field in form %}
+                {% for error in field.errors %}
+                    <div class="p-4 mb-4 bg-red-300 text-white rounded-lg">
+                        <p>{{ error|escape }}</p>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <button type="submit" class="w-full px-6 py-3 rounded-lg text-white bg-teal-600 hover:bg-teal-700 transition duration-300">Login</button>
+
+    <div class="mt-6 text-center">
+        <p class="text-teal-600 text-sm">Don't have an account? <a href="/signup/" class="text-teal-700 hover:text-teal-800 transition duration-300">Sign up here</a>.</p>
+    </div>
+</form>
+{% endblock %}
