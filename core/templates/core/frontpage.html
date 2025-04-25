@@ -18,10 +18,22 @@
         Whether you're catching up with friends or collaborating with teammates, DjangoChat helps you stay connected wherever you are.
     </p>
 
+    {% if user.is_authenticated %}
+    <!-- Content for logged-in users -->
+    <div class="mt-10">
+        <h2 class="text-3xl font-semibold text-teal-600 dark:text-teal-400 mb-4">Chat with the Community</h2>
+        <p class="text-lg text-gray-600 dark:text-gray-300 mb-6">Start chatting and connecting with other users in real-time.</p>
+        <a href="/rooms/" class="inline-block bg-teal-600 text-white font-semibold text-lg px-8 py-3 rounded-xl shadow-md hover:bg-teal-700 transition">
+            Enter Community Rooms
+        </a>
+    </div>
+    {% else %}
+    <!-- Content for non-logged-in users -->
     <div class="mt-10">
         <a href="/login/" class="inline-block bg-black text-white dark:bg-white dark:text-black font-semibold text-lg px-8 py-3 rounded-xl shadow-md hover:bg-gray-800 dark:hover:bg-gray-200 transition">
             Login to Chat
         </a>
     </div>
+    {% endif %}
 </div>
 {% endblock %}

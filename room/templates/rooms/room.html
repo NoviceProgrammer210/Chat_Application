@@ -14,7 +14,7 @@
 
     <!-- Chat messages container - fills the available space -->
     <div class="flex-1 w-full p-6 bg-gray-800 dark:bg-gray-900 rounded-xl shadow-xl overflow-y-auto text-white mb-6">
-        <div class="chat-messages space-y-3" id="chat-messages">
+        <div class="chat-messages space-y-3" id="chat-messages" style="max-height: 70vh; overflow-y: scroll;">
             {% for m in messages %}
                 {% if m.user.username == request.user.username %}
                     <div class="flex justify-end">

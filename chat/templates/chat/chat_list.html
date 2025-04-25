@@ -1,0 +1,41 @@
+{% extends 'core/base.html' %}
+{% block content %}
+<div class="bg-gray-900 dark:bg-gray-800 p-6 rounded-2xl shadow-xl fade-in">
+    <h2 class="text-2xl font-semibold mb-6 text-gray-100 border-b border-gray-700 pb-2">
+        People You Chat With
+    </h2>
+
+    <!-- Search Bar -->
+    <input type="text" id="userSearch" placeholder="Search users..."
+           class="w-full mb-4 p-3 rounded-xl bg-gray-800 text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-500">
+
+    <!-- User List -->
+    <ul class="space-y-4" id="userList">
+        {% for user in users %}
+        <li>
+            <a href="{% url 'private_chat' user.username %}"
+               class="block p-4 bg-gray-800 hover:bg-gray-700 rounded-xl text-gray-200 font-medium transition transform duration-200 ease-in-out hover:scale-105">
+                {{ user.username }}
+            </a>
+        </li>
+        {% empty %}
+        <li class="text-gray-400">No chats yet.</li>
+        {% endfor %}
+    </ul>
+</div>
+
+<!-- Live Search Script -->
+<script>
+    const searchInput = document.getElementById('userSearch');
+    const userList = document.getElementById('userList');
+    const allUsers = userList.querySelectorAll('li');
+
+    searchInput.addEventListener('keyup', () => {
+        const query = searchInput.value.toLowerCase();
+        allUsers.forEach(li => {
+            const text = li.textContent.toLowerCase();
+            li.style.display = text.includes(query) ? '' : 'none';
+        });
+    });
+</script>
+{% endblock %}
