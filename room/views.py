@@ -15,3 +15,4 @@ def room_fetch(req,slug):
     messages = Message.objects.filter(room=rooms)[0:25]
 
     return render(req,'rooms/room.html',{'room':rooms,'messages':messages})
+

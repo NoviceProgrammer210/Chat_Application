@@ -1,9 +1,28 @@
 {% extends 'core/base.html' %}
 {% block content %}
+
+<!-- Floating Button -->
+<button id="openSearchModal" 
+        class="fixed bottom-6 right-6 bg-teal-600 hover:bg-teal-700 text-white p-4 rounded-full shadow-lg z-50 transition-transform transform hover:scale-110">
+    +
+</button>
+
+<!-- Search Modal -->
+<div id="searchModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+    <div class="bg-gray-800 p-6 rounded-xl w-80 shadow-xl relative">
+        <button id="closeSearchModal" class="absolute top-2 right-3 text-gray-400 hover:text-white text-xl">&times;</button>
+        <h3 class="text-lg font-semibold mb-4 text-white">Start a Chat</h3>
+        <input type="text" id="globalSearchInput" placeholder="Search users..."
+               class="w-full px-3 py-2 mb-4 rounded-lg text-sm bg-gray-900 text-gray-100 placeholder-gray-500 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-500 transition duration-200">
+        <ul id="searchResults" class="space-y-4">
+            <!-- Dynamic search results will be added here -->
+        </ul>
+    </div>
+</div>
+
+<!-- Main Chat Section -->
 <div class="bg-gray-900 dark:bg-gray-800 p-6 rounded-2xl shadow-xl fade-in">
-    <h2 class="text-2xl font-semibold mb-6 text-gray-100 border-b border-gray-700 pb-2">
-        People You Chat With
-    </h2>
+    <h2 class="text-2xl font-semibold mb-6 text-gray-100 border-b border-gray-700 pb-2">People You Chat With</h2>
 
     <!-- Search Bar -->
     <input type="text" id="userSearch" placeholder="Search users..."
@@ -19,13 +38,51 @@
             </a>
         </li>
         {% empty %}
-        <li class="text-gray-400">No chats yet.</li>
+        <li class="text-gray-400 text-center">No chats yet.</li>
         {% endfor %}
     </ul>
 </div>
 
-<!-- Live Search Script -->
+<!-- Scripts -->
 <script>
+    // Modal toggle
+    const openModal = document.getElementById('openSearchModal');
+    const closeModal = document.getElementById('closeSearchModal');
+    const modal = document.getElementById('searchModal');
+
+    openModal.addEventListener('click', () => modal.classList.remove('hidden'));
+    closeModal.addEventListener('click', () => modal.classList.add('hidden'));
+
+    // Global user search in modal
+    const globalSearchInput = document.getElementById('globalSearchInput');
+    const searchResults = document.getElementById('searchResults');
+
+    globalSearchInput.addEventListener('input', async () => {
+        const query = globalSearchInput.value.trim().toLowerCase();
+        searchResults.innerHTML = '';
+
+        if (query.length === 0) return;
+
+        const response = await fetch(`/chat/search/?query=${query}`);
+        const data = await response.json();
+
+        if (data.users.length > 0) {
+            data.users.forEach(user => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <a href="/chat/${user.username}/""
+                       class="block p-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition">
+                        ${user.username}
+                    </a>
+                `;
+                searchResults.appendChild(li);
+            });
+        } else {
+            searchResults.innerHTML = `<li class="text-gray-400 text-center">No users found.</li>`;
+        }
+    });
+
+    // Local user filter (chat list)
     const searchInput = document.getElementById('userSearch');
     const userList = document.getElementById('userList');
     const allUsers = userList.querySelectorAll('li');
@@ -38,4 +95,5 @@
         });
     });
 </script>
+
 {% endblock %}

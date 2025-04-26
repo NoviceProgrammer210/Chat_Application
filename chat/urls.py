@@ -4,5 +4,6 @@ from . import views
 
 urlpatterns = [
     path('chats/', views.chat_list, name='chat_list'),
-    path('<str:username>/', views.private_chat, name='private_chat'),  
+    path('search/', views.search_users, name='search_users'),  # keep this before <str:username>
+    path('<str:username>/', views.private_chat, name='private_chat'),
 ]
