@@ -27,22 +27,24 @@ A real-time chat application built using **Django**, **Django Channels**, **Daph
 ## 🛠️ Installation
 
 ```bash
-# 1. Clone the repository
-git clone https://github.com/NoviceProgrammer210/Chat_Application.git
-cd Chat
 
-# 2. Create and activate a virtual environment
+# 1. Create and activate a virtual environment
 python -m venv env
 source env/bin/activate    # For Linux/macOS
 env\Scripts\activate       # For Windows
 
+# 2. Clone the repository
+git clone https://github.com/NoviceProgrammer210/Chat_Application.git
+
+
+
 pip install django channels websocket
 
-# 4. Run database migrations
+# 3. Run database migrations
 python manage.py migrate
 
-# 5. Run the Daphne server
-daphne your_project_name.asgi:application
+# 4. Run the Daphne server
+daphne -b 127.0.0.1 -p 8000 Chat.asgi:application # To run the Chat Application 
 ```
 
 
