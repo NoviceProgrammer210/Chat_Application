@@ -41,6 +41,7 @@ git clone https://github.com/NoviceProgrammer210/Chat_Application.git
 pip install django channels websocket
 
 # 3. Run database migrations
+python manage.py makemigrations
 python manage.py migrate
 
 # 4. Run the Daphne server
